@@ -1,0 +1,67 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+
+model usuario{
+id            String      @id @default(uuid())
+cpf           String   @unique 
+nome          String
+email         String   @unique
+senha         String
+tipo          String
+sexo          String
+data_nascimento DateTime
+criado_em DateTime @default(now())
+atulizado_em DateTime @updatedAt
+
+estudante estudante[]
+professor professor[]
+profissional profissional[]
+}
+
+model estudante {
+id         String      @id @default(uuid())
+usuario_id String
+periodo    Int
+criado_em DateTime @default(now())
+atulizado_em DateTime @updatedAt
+
+
+
+// Relacionamento com Usuario
+usuario    usuario  @relation(fields: [usuario_id], references: [id])
+
+}
+
+
+model professor{
+id String @id @default(uuid())
+usuario_id String
+profissional_id String 
+criado_em DateTime @default(now())
+atulizado_em DateTime @updatedAt
+
+
+usuario usuario @relation(fields: [usuario_id], references: [id])
+profissional profissional @relation(fields: [profissional_id],references: [id])
+}
+
+model profissional{
+id String @id @default(uuid())
+usuario_id String
+especialidade String
+registro_conselho String
+criado_em DateTime @default(now())
+atulizado_em DateTime @updatedAt
+
+
+usuario usuario @relation(fields: [usuario_id],references: [id])
+professor professor[]
+}
