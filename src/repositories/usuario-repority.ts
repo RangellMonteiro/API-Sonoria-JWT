@@ -1,5 +1,6 @@
 import { usuario } from '@prisma/client'
 import { Usuario } from '../entities/usuario-entity'
+import { PrismaRepository } from '../types/global'
 
 export class UsuarioRepository {
   private prisma: PrismaRepository
@@ -20,6 +21,13 @@ export class UsuarioRepository {
   async findById(id: string): Promise<usuario | null> {
     const usuarioFound = await this.prisma.usuario.findUnique({
       where: { id },
+    })
+    return usuarioFound
+  }
+
+  async findByCPF(cpf: string): Promise<usuario | null> {
+    const usuarioFound = await this.prisma.usuario.findUnique({
+      where: { cpf },
     })
     return usuarioFound
   }
