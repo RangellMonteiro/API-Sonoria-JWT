@@ -7,8 +7,7 @@ import AppError from '../../error/app-error'
 
 export class CriarUsuario {
   private async hashPassword(password: string): Promise<string> {
-    const salt = await bcrypt.genSalt(10)
-    return bcrypt.hash(password, salt)
+    return bcrypt.hash(password, 10)
   }
 
   async execute(data: UsuarioCreateInput) {
@@ -26,7 +25,7 @@ export class CriarUsuario {
           data_nascimento: data.data_nascimento,
           email: data.email,
           nome: data.nome,
-          senha: hashedPassword, // Senha com hash
+          senha: hashedPassword,
           sexo: data.sexo,
           tipo: data.tipo,
         }),
@@ -35,11 +34,11 @@ export class CriarUsuario {
       // Lógica para tipos de usuários
       switch (data.tipo) {
         case 'estudante':
-          await this.criarEstudante(connection, usuario.id, data.periodo)
+          await this.criarEstudante(connection, usuario.id, data.periodo);
           break
 
         case 'profissional':
-          await this.criarProfissional(connection, usuario.id, data.especialidade, data.registro_conselho)
+          await this.criarProfissional(connection, usuario.id, data.especialidade, data.registro_conselho);
           break
 
         case 'professor':
@@ -49,15 +48,15 @@ export class CriarUsuario {
             data.especialidade,
             data.registro_conselho,
           )
-          await this.criarProfessor(connection, usuario.id, profissional.id)
+          await this.criarProfessor(connection, usuario.id, profissional.id);
           break
 
         default:
-          AppError('Tipo de usuário inválido.')
+          throw new AppError('Tipo de usuário inválido.');
       }
 
-      return usuario
-    })
+      return usuario;
+    });
   }
 
   private async criarEstudante(connection: PrismaClient, usuarioId: string, periodo: number) {
@@ -66,7 +65,7 @@ export class CriarUsuario {
         usuario_id: usuarioId,
         periodo: periodo,
       },
-    })
+    });
   }
 
   private async criarProfissional(
@@ -81,7 +80,7 @@ export class CriarUsuario {
         especialidade: especialidade,
         registro_conselho: registro_conselho,
       },
-    })
+    });
   }
 
   private async criarProfessor(connection: PrismaClient, usuarioId: string, profissionalId: string) {
@@ -90,6 +89,6 @@ export class CriarUsuario {
         usuario_id: usuarioId,
         profissional_id: profissionalId,
       },
-    })
+    });
   }
 }
